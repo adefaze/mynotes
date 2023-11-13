@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -29,49 +28,58 @@ class _LoginView extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: _email,
-          enableSuggestions: false,
-          autocorrect: false,
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            hintText: 'enter email address',
+    return Scaffold(
+      appBar: AppBar(title: const Text('Login')),
+      body: Column(
+        children: [
+          TextField(
+            controller: _email,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              hintText: 'enter email address',
+            ),
           ),
-        ),
-        TextField(
-          controller: _password,
-          obscureText: true,
-          enableSuggestions: false,
-          autocorrect: false,
-          decoration: const InputDecoration(
-            hintText: 'enter password',
+          TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'enter password',
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: () async {
-            final email = _email.text;
-            final password = _password.text;
-            try {
-              final userCredential =
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: email,
-                password: password,
-              );
-              print(userCredential);
-            } on FirebaseAuthException catch (e) {
-              // print(e.runtimeType);
-              if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-                print('Invalid Login Credentials');
-              } else if (e.code == 'invalid-email') {
-                print('Enter a valid email address');
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                final userCredential =
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+                print(userCredential);
+              } on FirebaseAuthException catch (e) {
+                // print(e.runtimeType);
+                if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+                  print('Invalid Login Credentials');
+                } else if (e.code == 'invalid-email') {
+                  print('Enter a valid email address');
+                }
               }
-            }
-          },
-          child: const Text('Login'),
-        ),
-      ],
+            },
+            child: const Text('Login'),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/register/', (route) => false);
+              },
+              child: const Text("Not yet registered? Register here"))
+        ],
+      ),
     );
   }
 }

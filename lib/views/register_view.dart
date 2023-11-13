@@ -28,50 +28,59 @@ class _RegisterView extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: _email,
-          enableSuggestions: false,
-          autocorrect: false,
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            hintText: 'enter email address',
+    return Scaffold(
+      appBar: AppBar(title: const Text("Register")),
+      body: Column(
+        children: [
+          TextField(
+            controller: _email,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              hintText: 'enter email address',
+            ),
           ),
-        ),
-        TextField(
-          controller: _password,
-          obscureText: true,
-          enableSuggestions: false,
-          autocorrect: false,
-          decoration: const InputDecoration(
-            hintText: 'enter password',
+          TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'enter password',
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: () async {
-            final email = _email.text;
-            final password = _password.text;
-            try {
-              final userCredential =
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                email: email,
-                password: password,
-              );
-              print(userCredential);
-            } on FirebaseAuthException catch (e) {
-              if (e.code == 'email-already-in-use') {
-                print('Email address already in use');
-              } else if (e.code == 'weak-password') {
-                print('Your password is weak');
-              } else if (e.code == 'invalid-email') {
-                print('please enter a valid email');
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+              try {
+                final userCredential =
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email,
+                  password: password,
+                );
+                print(userCredential);
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'email-already-in-use') {
+                  print('Email address already in use');
+                } else if (e.code == 'weak-password') {
+                  print('Your password is weak');
+                } else if (e.code == 'invalid-email') {
+                  print('please enter a valid email');
+                }
               }
-            }
-          },
-          child: const Text('create account'),
-        ),
-      ],
+            },
+            child: const Text('create account'),
+          ),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login/', (route) => false);
+              },
+              child: const Text('Already registered? Login')),
+        ],
+      ),
     );
   }
 }
