@@ -43,14 +43,27 @@ class HomePage extends StatelessWidget {
             } else {
               return const LoginView();
             }
-            print('done');
 
-            return const LoginView();
+            return const Text('done');
 
           default:
             return const CircularProgressIndicator();
         }
       },
     );
+  }
+}
+
+class NotesView extends StatefulWidget {
+  const NotesView({super.key});
+
+  @override
+  State<NotesView> createState() => _NotesViewState();
+}
+
+class _NotesViewState extends State<NotesView> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
