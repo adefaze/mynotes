@@ -70,8 +70,15 @@ class _NotesViewState extends State<NotesView> {
         title: const Text('Notes'),
         actions: [
           PopupMenuButton<MenuAction>(
-            onSelected: (value) {
-              devtools.log(value.toString());
+            onSelected: (value) async {
+              // devtools.log(value.toString());
+              switch (value) {
+                case MenuAction.logout:
+                  final shouldLogout = await showLogOutDialog(context);
+                  devtools.log(shouldLogout.toString());
+                  break;
+                default:
+              }
             },
             itemBuilder: (context) {
               return const [
@@ -88,17 +95,25 @@ class _NotesViewState extends State<NotesView> {
   }
 }
 
-Future<void> showLogOutDialog(BuildContext context) {
-  showDialog(
+Future<bool> showLogOutDialog(BuildContext context) {
+  return showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Log out'),
           content: const Text('Are you sure you want to logout?'),
           actions: [
-            TextButton(onPressed: (){}, child: Text('Cancel')),
-            TextButton(onPressed: (){}, child: Text('Logout'))
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text('Cancel')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: const Text('Logout'))
           ],
         );
-      });
+      }).then((value) => value ?? false);
 }
