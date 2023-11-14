@@ -5,6 +5,7 @@ import 'package:notesapp/firebase_options.dart';
 import 'package:notesapp/views/login_view.dart';
 import 'package:notesapp/views/register_view.dart';
 import 'package:notesapp/views/verity_email_view.dart';
+import 'dart:developer' as devtools show log;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,7 +70,9 @@ class _NotesViewState extends State<NotesView> {
         title: const Text('Notes'),
         actions: [
           PopupMenuButton<MenuAction>(
-            onSelected: (value) {},
+            onSelected: (value) {
+              devtools.log(value.toString());
+            },
             itemBuilder: (context) {
               return const [
                 PopupMenuItem<MenuAction>(
@@ -83,4 +86,19 @@ class _NotesViewState extends State<NotesView> {
       ),
     );
   }
+}
+
+Future<void> showLogOutDialog(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Log out'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(onPressed: (){}, child: Text('Cancel')),
+            TextButton(onPressed: (){}, child: Text('Logout'))
+          ],
+        );
+      });
 }
