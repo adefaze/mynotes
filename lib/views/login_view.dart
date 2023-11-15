@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -72,11 +73,29 @@ class _LoginView extends State<LoginView> {
                 // print(e.runtimeType);
                 if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
                   // print('Invalid Login Credentials');
-                  devtools.log('Invalid login credentials');
+                  // devtools.log('Invalid login credentials');
+                  await showErrorDialog(
+                    context,
+                    'Invalid login credentials',
+                  );
                 } else if (e.code == 'invalid-email') {
                   // print('Enter a valid email address');
-                  devtools.log('Enter a valid email address');
+                  // devtools.log('Enter a valid email address');
+                  await showErrorDialog(
+                    context,
+                    'Invalid email address',
+                  );
+                } else {
+                  await showErrorDialog(
+                    context,
+                    'Error: ${e.code}',
+                  );
                 }
+              } catch (e) {
+                await showErrorDialog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text('Login'),
@@ -94,3 +113,5 @@ class _LoginView extends State<LoginView> {
     );
   }
 }
+
+
