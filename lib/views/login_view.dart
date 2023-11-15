@@ -62,8 +62,10 @@ class _LoginView extends State<LoginView> {
                   password: password,
                 );
                 devtools.log(userCredential.toString());
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/', (route) => false);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/notes/',
+                  (route) => false,
+                );
               } on FirebaseAuthException catch (e) {
                 // print(e.runtimeType);
                 if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
@@ -79,8 +81,10 @@ class _LoginView extends State<LoginView> {
           ),
           TextButton(
               onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/register/', (route) => false);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/register/',
+                  (route) => false,
+                );
               },
               child: const Text("Not yet registered? Register here"))
         ],
