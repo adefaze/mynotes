@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/utilities/show_error_dialog.dart';
+import 'package:notesapp/views/verify_email_view.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -58,24 +58,43 @@ class _RegisterView extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                // print(userCredential);
-                devtools.log(userCredential.toString());
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+                Navigator.of(context).pushNamed(verifyEmailRoute);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'email-already-in-use') {
                   // print('Email address already in use');
-                  devtools.log('Email address already in use');
+                  // devtools.log('Email address already in use');
+                  await showErrorDialog(
+                    context,
+                    'Email address already in use',
+                  );
                 } else if (e.code == 'weak-password') {
                   // print('Your password is weak');
-                  devtools.log('Your password is weak');
+                  // devtools.log('Your password is weak');
+                  await showErrorDialog(
+                    context,
+                    'Weak password',
+                  );
                 } else if (e.code == 'invalid-email') {
                   // print('please enter a valid email');
-                  devtools.log('Please enter a valid email address');
+                  // devtools.log('Please enter a valid email address');
+                  await showErrorDialog(
+                    context,
+                    'Please enter a valid email address',
+                  );
+                } else {
+                  await showErrorDialog(context, 'Error: ${e.code}');
                 }
+              } catch (e) {
+                await showErrorDialog(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text('create account'),
