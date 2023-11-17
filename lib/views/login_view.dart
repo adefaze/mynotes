@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
+// import 'dart:developer' as devtools show log;
 
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/utilities/show_error_dialog.dart';
@@ -58,17 +59,28 @@ class _LoginView extends State<LoginView> {
             onPressed: () async {
               final email = _email.text;
               final password = _password.text;
+              final user = FirebaseAuth.instance.currentUser;
+
               try {
-                final userCredential =
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                devtools.log(userCredential.toString());
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notesRoute,
-                  (route) => false,
-                );
+
+                final user = FirebaseAuth.instance.currentUser;
+                if (user?.emailVerified ?? false) {
+                  //user is verified
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) => false,
+                  );
+                } else {
+                  //user isnt verified
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    verifyEmailRoute,
+                    (route) => false,
+                  );
+                }
               } on FirebaseAuthException catch (e) {
                 // print(e.runtimeType);
                 if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
@@ -113,5 +125,3 @@ class _LoginView extends State<LoginView> {
     );
   }
 }
-
-
