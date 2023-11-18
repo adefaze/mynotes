@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/utilities/show_error_dialog.dart';
-import 'package:notesapp/views/verify_email_view.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
