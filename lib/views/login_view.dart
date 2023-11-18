@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // import 'dart:developer' as devtools show log;
 
 import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/services/auth/auth_exceptions.dart';
+import 'package:notesapp/services/auth/auth_service.dart';
 import 'package:notesapp/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -61,13 +61,11 @@ class _LoginView extends State<LoginView> {
               final password = _password.text;
 
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: email,
-                  password: password,
-                );
+                await AuthService.firebase()
+                    .logIn(email: email, password: password);
 
-                final user = FirebaseAuth.instance.currentUser;
-                if (user?.emailVerified ?? false) {
+                final user = AuthService.firebase().currentUser;
+                if (user?.isEmailVerified ?? false) {
                   //user is verified
                   if (!mounted) return;
                   Navigator.of(context).pushNamedAndRemoveUntil(
@@ -82,34 +80,51 @@ class _LoginView extends State<LoginView> {
                     (route) => false,
                   );
                 }
-              } on FirebaseAuthException catch (e) {
-                // print(e.runtimeType);
-                if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-                  // print('Invalid Login Credentials');
-                  // devtools.log('Invalid login credentials');
-                  await showErrorDialog(
-                    context,
-                    'Invalid login credentials',
-                  );
-                } else if (e.code == 'invalid-email') {
-                  // print('Enter a valid email address');
-                  // devtools.log('Enter a valid email address');
-                  await showErrorDialog(
-                    context,
-                    'Invalid email address',
-                  );
-                } else {
-                  await showErrorDialog(
-                    context,
-                    'Error: ${e.code}',
-                  );
-                }
-              } catch (e) {
+              } on InvalidLoginCredentialsAuthException {
                 await showErrorDialog(
                   context,
-                  e.toString(),
+                  'Invalid login credentials',
+                );
+              } on InvalidEmailAddressAuthException {
+                await showErrorDialog(
+                  context,
+                  'Invalid email address',
+                );
+              } on GenericAuthException {
+                await showErrorDialog(
+                  context,
+                  'Authentication Error',
                 );
               }
+
+              // on FirebaseAuthException catch (e) {
+              //   // print(e.runtimeType);
+              //   if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+              //     // print('Invalid Login Credentials');
+              //     // devtools.log('Invalid login credentials');
+              //     await showErrorDialog(
+              //       context,
+              //       'Invalid login credentials',
+              //     );
+              //   } else if (e.code == 'invalid-email') {
+              //     // print('Enter a valid email address');
+              //     // devtools.log('Enter a valid email address');
+              //     await showErrorDialog(
+              //       context,
+              //       'Invalid email address',
+              //     );
+              //   } else {
+              //     await showErrorDialog(
+              //       context,
+              //       'Error: ${e.code}',
+              //     );
+              //   }
+              // } catch (e) {
+              //   await showErrorDialog(
+              //     context,
+              //     e.toString(),
+              //   );
+              // }
             },
             child: const Text('Login'),
           ),
