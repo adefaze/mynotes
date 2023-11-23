@@ -48,6 +48,24 @@ void main() {
         password: 'bar',
       );
       expect(provider.currentUser, user);
+      expect(user.isEmailVerified, false);
+    });
+
+    test('logged in user should be able to get verified', () {
+      provider.sendEmailVerification();
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+      expect(user!.isEmailVerified, true);
+    });
+
+    test('user should be able to login and logout again', () async {
+      await provider.logOut();
+      await provider.logIn(
+        email: 'email',
+        password: 'password',
+      );
+      final user = provider.currentUser;
+      expect(user, isNotNull);
     });
   });
 }
@@ -84,7 +102,7 @@ class MockAuthProvider implements AuthProvider {
   @override
   Future<AuthUser> logIn({required String email, required String password}) {
     if (!isInitialized) throw NotInitializedException();
-    if (email == 'ade@gmail.com') throw InvalidEmailAddressAuthException();
+    if (email == 'ade@gmail.com') throw UserNotFoundAuthException();
     if (password == 'ade123') throw InvalidLoginCredentialsAuthException();
     const user = AuthUser(isEmailVerified: false);
     _user = user;
