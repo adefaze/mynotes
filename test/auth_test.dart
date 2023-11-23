@@ -9,6 +9,24 @@ void main() {
     test('Should not be initiated to beign with', () {
       expect(provider.isInitialized, false);
     });
+    test('cannot logout if not initialized', () {
+      expect(provider.logOut(),
+          throwsA(const TypeMatcher<NotInitializedException>()));
+    });
+
+    test('Should be able to initialized', () async {
+      await provider.initilize();
+      expect(provider.isInitialized, true);
+    });
+
+    test('User should be null after initialization', () {
+      expect(provider.currentUser, null);
+    });
+
+    test('should be able to initialize in less than 2 seconds', () async {
+      await provider.initilize();
+      expect(provider.isInitialized, true);
+    }, timeout: const Timeout(Duration(seconds: 2)));
   });
 }
 
