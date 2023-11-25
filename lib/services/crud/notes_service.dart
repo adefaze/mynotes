@@ -26,6 +26,7 @@ class NotesService {
     final allNotes = await getAllNotes();
     _notes = allNotes.toList();
     _notesStreamController.add(_notes);
+    
   }
 
   // STREAM: GET OR CREATE USER IN NOTES_SERVICE
