@@ -67,7 +67,7 @@ class _NewNoteViewState extends State<NewNoteView> {
   void _saveNoteIfTextNotEmpty() async {
     final note = _note;
     final text = _textController.text;
-    if (text.isNotEmpty && note != null) {
+    if (note != null && text.isNotEmpty) {
       await _notesService.updateNote(
         note: note,
         text: text,
@@ -94,7 +94,11 @@ class _NewNoteViewState extends State<NewNoteView> {
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.done:
-                  _note = snapshot.data as DatabaseNote;
+                  // if (snapshot.hasError || snapshot.data == null) {
+                  //   // Handle error or null data
+                  //   return const Text('Error creating note');
+                  // }
+                  _note = snapshot.data as DatabaseNote?;
                   _setupTextcontrollerListerner();
                   return TextField(
                     controller: _textController,

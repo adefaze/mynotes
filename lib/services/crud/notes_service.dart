@@ -11,13 +11,20 @@ class NotesService {
   // STREAMS -- CACHING
   List<DatabaseNote> _notes = [];
 
-  // MAKE NOTESERVICE A SINGLETON
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
+
+  // MAKE NOTESERVICE A SINGLETON
+
   factory NotesService() => _shared;
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
@@ -26,7 +33,6 @@ class NotesService {
     final allNotes = await getAllNotes();
     _notes = allNotes.toList();
     _notesStreamController.add(_notes);
-    
   }
 
   // STREAM: GET OR CREATE USER IN NOTES_SERVICE
@@ -170,7 +176,7 @@ class NotesService {
     final results = await db.query(
       userTable,
       limit: 1,
-      where: 'email: ?',
+      where: 'email = ?',
       whereArgs: [email.toLowerCase()],
     );
     if (results.isEmpty) {
@@ -187,7 +193,7 @@ class NotesService {
     final results = await db.query(
       userTable,
       limit: 1,
-      where: 'email: ?',
+      where: 'email = ?',
       whereArgs: [email.toLowerCase()],
     );
     if (results.isNotEmpty) {
@@ -242,6 +248,10 @@ class NotesService {
   // ENSURE DATABASE IS OPENED
   Future<void> _ensureDbIsOpen() async {
     try {
+      final docsPath = await getApplicationDocumentsDirectory();
+      final dbPath = join(docsPath.path, dbName);
+      await deleteDatabase(dbPath);
+
       await open();
     } on DatabaseAlreadyOpenException {
       // empty
@@ -259,12 +269,15 @@ class NotesService {
       final db = await openDatabase(dbPath);
       _db = db;
 
+      print('Database created successfully');
       // CREATE USER TABLE
       await db.execute(createUserTable);
 
       // CREATE NOTE TABLE
       await db.execute(createNoteTable);
       await _cacheNotes();
+
+      // await deleteDatabase(dbPath);
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
     }
@@ -333,7 +346,7 @@ const idColumn = 'id';
 const emailColumn = 'email';
 const userIdColumn = 'user_id';
 const textColumn = 'text';
-const isSynchedWithCloudColumn = 'is_synched_with_cloud_column';
+const isSynchedWithCloudColumn = 'is_synched_with_cloud';
 
 const createUserTable = '''
           CREATE TABLE IF NOT EXISTS "user" (
