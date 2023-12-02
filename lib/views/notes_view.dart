@@ -3,6 +3,8 @@ import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/enums/menu_action.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
 import 'package:notesapp/services/crud/notes_service.dart';
+import 'package:notesapp/utilities/dialogs/logout_dialog.dart';
+import 'package:notesapp/views/notes/notes_list_view.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -40,7 +42,7 @@ class _NotesViewState extends State<NotesView> {
               // devtools.log(value.toString());
               switch (value) {
                 case MenuAction.logout:
-                  final shouldLogout = await showLogOutDialog(context);
+                  final shouldLogout = await showLogoutDialog(context);
                   // devtools.log(shouldLogout.toString());
                   if (shouldLogout) {
                     // await FirebaseAuth.instance.signOut();
@@ -75,20 +77,11 @@ class _NotesViewState extends State<NotesView> {
                       case ConnectionState.active:
                         if (snapshot.hasData) {
                           final allNotes = snapshot.data as List<DatabaseNote>;
-                          return ListView.builder(
-                            itemCount: allNotes.length,
-                            itemBuilder: (context, index) {
-                              final note = allNotes[index];
-                              return ListTile(
-                                title: Text(
-                                  note.text,
-                                  maxLines: 1,
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            },
-                          );
+                          return NotesListView(
+                              notes: allNotes,
+                              onDeleteNote: (note) async {
+                                await _notesService.deleteNote(id: note.id);
+                              });
                         } else {
                           return const CircularProgressIndicator();
                         }
@@ -105,4 +98,3 @@ class _NotesViewState extends State<NotesView> {
     );
   }
 }
-
