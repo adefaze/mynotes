@@ -38,6 +38,18 @@ class FirebaseCloudStorage {
         .where((note) => note.ownerUserId == ownerUserId));
   }
 
+  // updates note
+  Future<void> updateNote(
+      {required String documentId, required String text}) async {
+    try {
+      await notes.doc(documentId).update({textFieldName: text});
+    } catch (e) {
+      throw CouldNotUpdateNoteException();
+    }
+  }
+
+  // delete note
+
   static final FirebaseCloudStorage _shared =
       FirebaseCloudStorage._sharedInstance();
   FirebaseCloudStorage._sharedInstance();
