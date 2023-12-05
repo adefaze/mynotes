@@ -50,6 +50,14 @@ class FirebaseCloudStorage {
 
   // delete note
 
+  Future<void> deleteNote({required String documentId}) async {
+    try {
+      await notes.doc(documentId).delete();
+    } catch (e) {
+      throw CouldNotDeleteNoteException();
+    }
+  }
+
   static final FirebaseCloudStorage _shared =
       FirebaseCloudStorage._sharedInstance();
   FirebaseCloudStorage._sharedInstance();
