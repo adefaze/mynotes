@@ -49,12 +49,8 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:notesapp/services/cloud/cloud_note.dart';
-
-import 'package:notesapp/services/crud/notes_service.dart';
 import 'package:notesapp/utilities/dialogs/delete_dialog.dart';
 
 typedef NoteCallback = void Function(CloudNote note);

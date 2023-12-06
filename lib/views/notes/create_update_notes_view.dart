@@ -122,7 +122,6 @@ import 'package:flutter/material.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
 import 'package:notesapp/utilities/generics/get_arguments.dart';
 import 'package:notesapp/services/cloud/cloud_note.dart';
-import 'package:notesapp/services/cloud/cloud_storage_exceptions.dart';
 import 'package:notesapp/services/cloud/firebase_cloud_storage.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
